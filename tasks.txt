@@ -1,0 +1,9 @@
+Criar agendamentos pelo shell 
+
+Registar o django admin em admin.py
+
+Fazer uma requisição para esse obj: 
+   def agendamento_detail(request, id):
+   obj = get_object_or_404(Agendamento, id=id)
+   serializer = AgendamentoSerializer(obj)
+   return JsonResponse(serializer.data) 
