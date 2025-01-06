@@ -1,9 +1,7 @@
-Criar agendamentos pelo shell *
-
-Registar o django admin em admin.py 
-
-Fazer uma requisição para esse obj: 
-   def agendamento_detail(request, id):
+Implementar Cancelar Agendamento:
+   if request.method == "DELETE":
    obj = get_object_or_404(Agendamento, id=id)
-   serializer = AgendamentoSerializer(obj)
-   return JsonResponse(serializer.data) 
+   obj.delete() 
+   return Response(status=204)#No Content
+
+   -> Ao inves de deletar o obj, alterar um atribudo dele (obj.cancelado)
