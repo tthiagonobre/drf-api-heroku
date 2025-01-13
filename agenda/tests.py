@@ -70,7 +70,6 @@ class TestCriacaoAgendamento(APITestCase):
          "email_cliente": "joao.silva@email.com",
          "telefone_cliente": "11987654321"
       }
-
       response = self.client.post("/api/agendamentos/", agendamento_request_data, format="json")
 
       agendamento_criado = Agendamento.objects.get()
@@ -116,7 +115,6 @@ class TestCriacaoAgendamento(APITestCase):
       
 
 class TestAgendamentoDetail(APITestCase):
-   # Criar os testes de agendamento_detail e refatorar a view para class based
    def test_detalhar_agendamento(self):
       data = {
          "data_horario": "2026-01-12T14:30:00Z",
@@ -139,7 +137,6 @@ class TestAgendamentoDetail(APITestCase):
          "email_cliente": "Luiz@email.com",
          "telefone_cliente": "846548465464"
       }
-
       response = self.client.post("/api/agendamentos/", data, format="json")
       self.assertEqual(response.status_code, 201)
       # Editar agendamento
