@@ -10,38 +10,7 @@ from agenda.models import Agendamento
 from agenda.serializers import AgendamentoSerializer
 
 # Create your views here.
-class AgendamentoDetail(
-   mixins.RetrieveModelMixin,
-   mixins.UpdateModelMixin,
-   mixins.DestroyModelMixin,
-   generics.GenericAPIView,
-):
-   queryset = Agendamento.objects.all()
-   serializer_class = AgendamentoSerializer
-   
-   
-   def get(self, request, *args, **kwargs):
-      return self.retrieve(request, *args, **kwargs)
-   
-   
-   def patch(self, request, *args, **kwargs):
-      return self.partial_update(request, *args, **kwargs)
-      
-   
-   def post(self, request, *args, **kwargs):
-      obj = self.get_object()  # Usa o get_object para buscar o agendamento
-      if obj.is_canceled:
-         return JsonResponse({"detail": "Agendamento já foi cancelado."}, status=400) # Evita recancelamento
-      obj.is_canceled = True
-      obj.save()
-      return Response({"detail": "Agendamento cancelado com secesso."}, status=200)#No Content
-   
-   
-class AgendamentoList(
-   mixins.ListModelMixin, # adicionar mixin de listagem
-   mixins.CreateModelMixin, # adicinar mixin de criação
-   generics.GenericAPIView, # classe generica
-):
+class AgendamentoList(generics.ListCreateAPIView): # api/agendamentos/
    queryset = Agendamento.objects.all()
    serializer_class = AgendamentoSerializer
    
@@ -56,14 +25,23 @@ class AgendamentoList(
          else:
                return Agendamento.objects.filter(is_canceled=False)
       return super().get_queryset()
-         
-         
-   def get(self, request, *args, **kwargs):
-      return self.list(request, *args, **kwargs)
+
+
+
+class AgendamentoDetail(generics.RetrieveUpdateDestroyAPIView): #api/agendamentos/<pk>/
+   queryset = Agendamento.objects.all()
+   serializer_class = AgendamentoSerializer
    
-   
+        
    def post(self, request, *args, **kwargs):
-      return self.create(request, *args, **kwargs)
+      obj = self.get_object()  # Usa o get_object para buscar o agendamento
+      if obj.is_canceled:
+         return JsonResponse({"detail": "Agendamento já foi cancelado."}, status=400) # Evita recancelamento
+      obj.is_canceled = True
+      obj.save()
+      return Response({"detail": "Agendamento cancelado com secesso."}, status=200)#No Content
+   
+   
 
 
 #f094
