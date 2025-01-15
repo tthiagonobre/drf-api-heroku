@@ -1,47 +1,47 @@
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import mixins
 from rest_framework import generics
-
+from rest_framework.response import Response
 from agenda.models import Agendamento
 from agenda.serializers import AgendamentoSerializer
 
-# Create your views here.
-class AgendamentoList(generics.ListCreateAPIView): # api/agendamentos/
-   queryset = Agendamento.objects.all()
-   serializer_class = AgendamentoSerializer
-   
-   
-   def get_queryset(self):
-      # Recupera o parâmetro 'cancelado' da requisição
-      cancelado = self.request.query_params.get("cancelado", None)
-      if cancelado is not None:
-         # Filtra os agendamentos com base no parâmetro 'cancelado'
-         if cancelado.lower() == "true":
-               return Agendamento.objects.filter(is_canceled=True)
-         else:
-               return Agendamento.objects.filter(is_canceled=False)
-      return super().get_queryset()
+
+class AgendamentoList(generics.ListCreateAPIView):  # api/agendamentos/
+    serializer_class = AgendamentoSerializer
+
+    def get_queryset(self):
+        # Recupera os parâmetros 'username' e 'deletado' da requisição
+        username = self.request.query_params.get("username", None)
+        deletado = self.request.query_params.get("deletado", None)
+
+        # Começa com todos os objetos
+        queryset = Agendamento.objects.all()
+
+        # Aplica o filtro por 'username', se fornecido
+        if username is not None:
+            queryset = queryset.filter(prestador__username=username)
+
+        # Aplica o filtro por 'deletado', se fornecido
+        if deletado is not None:
+            if deletado.lower() == "true":
+                queryset = queryset.filter(deletado=True)
+            elif deletado.lower() == "false":
+                queryset = queryset.filter(deletado=False)
+
+        return queryset
 
 
+class AgendamentoDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Agendamento.objects.all()
+    serializer_class = AgendamentoSerializer
 
-class AgendamentoDetail(generics.RetrieveUpdateDestroyAPIView): #api/agendamentos/<pk>/
-   queryset = Agendamento.objects.all()
-   serializer_class = AgendamentoSerializer
-   
+    def delete(self, request, *args, **kwargs):
+        # Obtém o objeto de agendamento
+        agendamento = self.get_object()
         
-   def post(self, request, *args, **kwargs):
-      obj = self.get_object()  # Usa o get_object para buscar o agendamento
-      if obj.is_canceled:
-         return JsonResponse({"detail": "Agendamento já foi cancelado."}, status=400) # Evita recancelamento
-      obj.is_canceled = True
-      obj.save()
-      return Response({"detail": "Agendamento cancelado com secesso."}, status=200)#No Content
-   
-   
+        # Marca o agendamento como deletado (deleção lógica)
+        agendamento.deletado = True
+        agendamento.save()
+        
+        return Response({"detail": "Agendamento deletado com sucesso."}, 204)
 
-
-#f094
+#f097
