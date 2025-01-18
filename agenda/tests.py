@@ -10,13 +10,22 @@ class TestListagemAgendamento(APITestCase):
     def setUp(self):
         # Criação do prestador para os testes
         self.prestador = User.objects.create_user(username="test_user", password="password123")
+        self.outro_prestador = User.objects.create_user(username="other_user", password="123password")
 
     def test_listagem_vazia(self):
-        response = self.client.get("/api/agendamentos/")
+        # Autenticar o client com o prestador criado
+        self.client.login(username="test_user", password="password123")
+        
+        response = self.client.get("/api/agendamentos/", {"username": "test_user"})
+        self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertEqual(data, [])
+      
 
-    def test_listagem_de_agendamentos_criados(self):
+    def test_listagem_de_agendamentos_criados(self): 
+        # Autenticar o client com o prestador criado
+        self.client.login(username="test_user", password="password123")
+        
         data = {
             "data_horario": "2026-01-10T14:30:00Z",
             "nome_cliente": "João Silva",
@@ -25,29 +34,34 @@ class TestListagemAgendamento(APITestCase):
             "prestador": "test_user",
             "deletado": False,
         }
-
+        # Criar o agendamento (POST)
         response_post = self.client.post("/api/agendamentos/", data, format="json")
         self.assertEqual(response_post.status_code, 201)
-
-        response_get = self.client.get("/api/agendamentos/")
+        
+        # Listar os agendamentos (GET) com o parâmetro 'username'
+        response_get = self.client.get("/api/agendamentos/", {"username": "test_user"})
         self.assertEqual(response_get.status_code, 200)
 
         agendamento_serializado = AgendamentoSerializer(Agendamento.objects.first()).data
-        self.assertDictEqual(response_get.data[0], agendamento_serializado)
+        data_recebida = response_get.data[0]
+        self.assertDictEqual(data_recebida, agendamento_serializado)
 
-    def test_listagem_de_agendamentos_deletados(self):
+
+    def test_listagem_de_agendamentos_deletados(self): 
+        self.client.login(username="test_user", password="password123")
+        
         data = {
             "data_horario": "2026-01-12T14:30:00Z",
             "nome_cliente": "Pedro",
             "email_cliente": "pedro@email.com",
-            "telefone_cliente": "+554781518965",  # Certifique-se de que o formato é aceito
-            "prestador": "test_user",  # Prestador deve ser criado no `setUp`
-            "deletado": False,  # Inicialmente False, pois a deleção será testada
+            "telefone_cliente": "+554781518965", 
+            "prestador": "test_user",  
+            "deletado": False, 
         }
 
         # Criação via POST
         response_post = self.client.post("/api/agendamentos/", data, format="json")
-        self.assertEqual(response_post.status_code, 201, response_post.json())  # Debugging extra para detalhes da falha
+        self.assertEqual(response_post.status_code, 201, response_post.json())  
 
         # Recupera o ID do agendamento criado
         agendamento_id = response_post.data["id"]
@@ -60,13 +74,16 @@ class TestListagemAgendamento(APITestCase):
         agendamento = Agendamento.objects.get(id=agendamento_id)
         self.assertTrue(agendamento.deletado)
 
+        # Verifica se o agendamento deletado é retornado com o filtro 'deletado=true'
+        response_get = self.client.get("/api/agendamentos/", {"username": "test_user", "deletado": "true"})
+        self.assertEqual(response_get.status_code, 200)  
 
 
 class TestCriacaoAgendamento(APITestCase):
     def setUp(self):
         self.prestador = User.objects.create_user(username="test_user", password="password123")
 
-    def test_cria_agendamento(self):
+    def test_cria_agendamento(self): 
         data = {
             "data_horario": "2026-01-11T14:30:00Z",
             "nome_cliente": "João Silva",
@@ -78,7 +95,7 @@ class TestCriacaoAgendamento(APITestCase):
         response = self.client.post("/api/agendamentos/", data, format="json")
         self.assertEqual(response.status_code, 201)
 
-    def test_cria_agendamento_outra_forma(self):
+    def test_cria_agendamento_outra_forma(self): 
         data = {
             "data_horario": "2026-01-11T14:30:00Z",
             "nome_cliente": "Neymar",
@@ -94,7 +111,7 @@ class TestCriacaoAgendamento(APITestCase):
         self.assertEqual(response_data["data_horario"], data["data_horario"])
         self.assertEqual(response_data["nome_cliente"], data["nome_cliente"])
 
-    def test_quando_request_e_invalido_retorna_400(self):
+    def test_quando_request_e_invalido_retorna_400(self): 
         data = {
             "data_horario": "2025-01-11T14:30:00Z",
             "nome_cliente": "João",
@@ -112,7 +129,9 @@ class TestAgendamentoDetail(APITestCase):
     def setUp(self):
         self.prestador = User.objects.create_user(username="test_user", password="password123")
 
-    def test_detalhar_agendamento(self):
+    def test_detalhar_agendamento(self): 
+        self.client.login(username="test_user", password="password123")
+        
         data = {
             "data_horario": "2026-01-12T14:30:00Z",
             "nome_cliente": "Pedro",
@@ -129,7 +148,9 @@ class TestAgendamentoDetail(APITestCase):
         response_get = self.client.get(f"/api/agendamentos/{agendamento_id}/")
         self.assertEqual(response_get.status_code, 200)
 
-    def test_editar_agendamento(self):
+    def test_editar_agendamento(self): 
+        self.client.login(username="test_user", password="password123")
+        
         data = {
             "data_horario": "2026-01-12T15:30:00Z",
             "nome_cliente": "Luiz",
@@ -153,7 +174,9 @@ class TestAgendamentoDetail(APITestCase):
         self.assertEqual(response_data["data_horario"], "2026-01-13T10:00:00Z")
         self.assertEqual(response_data["nome_cliente"], "Luiz")
 
-    def test_deletar_agendamento(self):
+    def test_deletar_agendamento(self): 
+        self.client.login(username="test_user", password="password123")
+        
         data = {
             "data_horario": "2026-01-12T14:30:00Z",
             "nome_cliente": "Pedro",
@@ -172,3 +195,24 @@ class TestAgendamentoDetail(APITestCase):
 
         agendamento = Agendamento.objects.get(id=agendamento_id)
         self.assertTrue(agendamento.deletado)
+        
+    
+    def test_usuario_nao_autenticado_nao_pode_acessar(self):
+        response_get = self.client.get("/api/agendamentos/", format="json")
+        self.assertEqual(response_get.status_code, 403)
+        
+
+    def test_usuario_nao_pode_listar_agendamentos_de_outro_prestador(self):
+        self.client.login(username="test_user", password="password123")
+        
+        data = {
+            "data_horario": "2026-01-12T14:30:00Z",
+            "nome_cliente": "Kaio",
+            "email_cliente": "kaio@email.com",
+            "telefone_cliente": "+55452214584",
+            "prestador": "other_user",
+            "deletado": False,
+        }
+        
+        response_get = self.client.get("/api/agendamentos/", {"username": "other_user"})
+        self.assertEqual(response_get.status_code, 403)
