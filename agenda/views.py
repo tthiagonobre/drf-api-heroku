@@ -1,9 +1,15 @@
+from datetime import datetime
 from django.http import JsonResponse
 from rest_framework import generics
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from agenda.models import Agendamento
-from agenda.serializers import AgendamentoSerializer
+from agenda.serializers import AgendamentoSerializer, PrestadorSerializer
 from rest_framework import permissions
+from rest_framework.permissions import IsAdminUser
+from django.contrib.auth.models import User
+
+from agenda.utils import get_horarios_disponiveis
 
 
 class IsOwnerOrCreateOnly(permissions.BasePermission):
@@ -63,5 +69,25 @@ class AgendamentoDetail(generics.RetrieveUpdateDestroyAPIView):
         agendamento.save()
         
         return Response({"detail": "Agendamento deletado com sucesso."}, 204)
+    
+#adicionar permissao nessa view q apenas o admin tenha acesso
+class PrestadorList(generics.ListAPIView): # api/agendamentos/
+    serializer_class = PrestadorSerializer
+    queryset = User.objects.all()
+    permission_classes = [IsAdminUser]
+    
+    
+@api_view(http_method_names=["GET"])
+def get_horarios(request):
+    data = request.query_params.get("data")
+    if not data:
+        data = datetime.now().date()
+    else:
+        data = datetime.fromisoformat(data).date()
+        
+    horarios_disponiveis = sorted(list(get_horarios_disponiveis(data)))
+    return JsonResponse(horarios_disponiveis, safe=False)    
+    
+    
 
-#f099 ATUALIZAR O ARQ DE TESTS (permissions)
+#f104 

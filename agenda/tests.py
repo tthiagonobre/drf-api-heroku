@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
@@ -216,3 +216,69 @@ class TestAgendamentoDetail(APITestCase):
         
         response_get = self.client.get("/api/agendamentos/", {"username": "other_user"})
         self.assertEqual(response_get.status_code, 403)
+        
+
+class TestPrestadorList(APITestCase):
+    def setUp(self):
+        self.prestador = User.objects.create_superuser(username="test_user", password="password123")
+        self.outro_prestador = User.objects.create_user(username="other_user", password="123password")
+     
+        
+    def test_acesso_permitido_do_superuser(self):
+        self.client.login(username="test_user", password="password123")
+        
+        data = {
+            "data_horario": "2026-01-12T14:30:00Z",
+            "nome_cliente": "Oscar",
+            "email_cliente": "oscar@email.com",
+            "telefone_cliente": "+555325845984",
+            "prestador": "test_user",
+            "deletado": False,
+        }
+        
+        response_post = self.client.post("/api/agendamentos/", data, format="json")
+        self.assertEqual(response_post.status_code, 201)
+        
+        response_get = self.client.get("/api/prestadores/", {"username": "test_user"})
+        self.assertEqual(response_get.status_code, 200)
+        
+        
+    def test_acesso_negado_para_user_comum(self):
+        self.client.login(username="other_user", password="123password")
+        
+        data = {
+            "data_horario": "2026-01-12T14:30:00Z",
+            "nome_cliente": "Paulo",
+            "email_cliente": "paulo@email.com",
+            "telefone_cliente": "+5578565215",
+            "prestador": "test_user",
+            "deletado": False,
+        }
+        
+        response_post = self.client.post("/api/agendamentos/", data, format="json")
+        self.assertEqual(response_post.status_code, 201)
+        
+        response_get = self.client.get("/api/prestadores/", {"username": "other_user"})
+        self.assertEqual(response_get.status_code, 403)
+
+
+    def test_acesso_negado_user_nao_autenticado(self):
+        response_get = self.client.get("/api/prestadores/")
+        self.assertEqual(response_get.status_code, 403)
+        
+from unittest import mock
+class TestGetHorario(APITestCase):
+    @mock.patch("agenda.libs.brasil_api.is_feriado", return_value=True)
+    def test_quando_data_e_feriado_retorna_lista_vazia(self, _):
+        response = self.client.get("/api/horarios/?data=2026-12-25")
+        self.assertEqual(response.json(), [])
+
+        
+    @mock.patch("agenda.libs.brasil_api.is_feriado", return_value=False)
+    def test_quando_data_e_dia_comum_lista_com_horarios(self, _):
+        response = self.client.get("/api/horarios/?data=2026-12-20")
+        horarios = [datetime.fromisoformat(h) for h in response.json()] # Converte str em datetime
+        
+        self.assertNotEqual(response.json(), [])
+        self.assertEqual(horarios[0], datetime(2026, 12, 20, 9, tzinfo=timezone.utc))
+        self.assertEqual(horarios[-1], datetime(2026, 12, 20, 17, 30, tzinfo=timezone.utc))

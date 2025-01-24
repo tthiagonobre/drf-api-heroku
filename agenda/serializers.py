@@ -3,14 +3,16 @@ from django.utils.timezone import now
 from rest_framework import serializers
 
 from agenda.models import Agendamento
+from agenda.utils import get_horarios_disponiveis
 
 class AgendamentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Agendamento
-        fields = ["id", "data_horario", "nome_cliente", "email_cliente", "telefone_cliente", "deletado", "prestador"]
+        fields = "__all__"
 
     prestador = serializers.CharField()
-
+ 
+ 
     def validate_prestador(self, value):
         """ Buscar um user no BD que esteja associado ao username que foi passado."""
         try:
@@ -23,6 +25,8 @@ class AgendamentoSerializer(serializers.ModelSerializer):
     def validate_data_horario(self, value):
         if value < now():
             raise serializers.ValidationError("Agendamento não pode ser feito no passado!")
+        if value not in get_horarios_disponiveis(value.date()):
+            raise serializers.ValidationError("Esse horário não está disponível")
         return value
 
 
@@ -38,3 +42,11 @@ class AgendamentoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Não é permitido modificar um agendamento deletado.")
         
         return attrs
+
+
+class PrestadorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "agendamentos"]
+        
+    agendamentos = AgendamentoSerializer(many=True, read_only=True)
