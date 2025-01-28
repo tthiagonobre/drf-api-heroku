@@ -1,0 +1,5 @@
+INFO 2025-01-28 18:26:41,733 autoreload Watching for file changes with StatReloader
+INFO 2025-01-28 18:26:44,977 brasil_api Fazendo requisição para BrasilAPI para a data: 2026-01-01
+INFO 2025-01-28 18:29:55,778 autoreload C:\Users\Thiago\OneDrive\Área de Trabalho\Py-Django\dfr-api\tamarcado\settings\base.py changed, reloading.
+INFO 2025-01-28 18:33:13,863 autoreload Watching for file changes with StatReloader
+INFO 2025-01-28 18:33:27,063 autoreload C:\Users\Thiago\OneDrive\Área de Trabalho\Py-Django\dfr-api\tamarcado\settings\base.py changed, reloading.
