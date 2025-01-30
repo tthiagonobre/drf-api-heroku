@@ -8,6 +8,7 @@ from agenda.serializers import AgendamentoSerializer, PrestadorSerializer
 from rest_framework import permissions
 from rest_framework.permissions import IsAdminUser
 from django.contrib.auth.models import User
+from rest_framework.renderers import JSONRenderer
 
 from agenda.utils import get_horarios_disponiveis
 
@@ -37,6 +38,7 @@ class AgendamentoList(generics.ListCreateAPIView):  # api/agendamentos/
         # Recupera os parâmetros 'username' e 'deletado' da requisição
         username = self.request.query_params.get("username", None)
         deletado = self.request.query_params.get("deletado", None)
+        renderer_classes = [JSONRenderer]  # Adicionando a renderização em JSON
 
         # Começa com todos os objetos
         queryset = Agendamento.objects.all()
@@ -89,5 +91,3 @@ def get_horarios(request):
     return JsonResponse(horarios_disponiveis, safe=False)    
     
     
-
-#f106

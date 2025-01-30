@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'agenda',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -162,4 +163,10 @@ LOGGING = {
             'handlers': ['console', 'file']
         }
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
 }
