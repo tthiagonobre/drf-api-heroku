@@ -1,7 +1,0 @@
-Implementar Cancelar Agendamento:
-   if request.method == "DELETE":
-   obj = get_object_or_404(Agendamento, id=id)
-   obj.delete() 
-   return Response(status=204)#No Content
-
-   -> Ao inves de deletar o obj, alterar um atribudo dele (obj.cancelado)
