@@ -28,3 +28,5 @@ INFO 2025-02-07 19:32:46,589 brasil_api Fazendo requisição para BrasilAPI para a
 WARNING 2025-02-07 19:33:02,308 log Forbidden: /api/agendamentos/
 INFO 2025-02-07 19:34:07,116 autoreload C:\Users\Thiago\OneDrive\Área de Trabalho\Py-Django\dfr-api\agenda\serializers.py changed, reloading.
 INFO 2025-02-07 19:34:07,822 autoreload Watching for file changes with StatReloader
+INFO 2025-02-07 19:42:19,706 autoreload C:\Users\Thiago\OneDrive\Área de Trabalho\Py-Django\dfr-api\agenda\views.py changed, reloading.
+INFO 2025-02-07 19:42:20,223 autoreload Watching for file changes with StatReloader
