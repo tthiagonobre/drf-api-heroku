@@ -4,3 +4,27 @@ INFO 2025-01-28 18:38:09,241 autoreload Watching for file changes with StatReloa
 INFO 2025-01-28 18:38:11,990 brasil_api Fazendo requisição para BrasilAPI para a data: 2026-01-01
 INFO 2025-01-30 14:37:07,749 autoreload Watching for file changes with StatReloader
 INFO 2025-02-06 17:29:28,173 autoreload Watching for file changes with StatReloader
+WARNING 2025-02-06 17:30:45,045 log Forbidden: /api/agendamentos/
+WARNING 2025-02-06 17:32:59,401 log Forbidden: /api/agendamentos/
+WARNING 2025-02-06 17:35:10,923 log Forbidden: /api/agendamentos/
+WARNING 2025-02-06 17:35:45,474 log Forbidden: /api/agendamentos/
+WARNING 2025-02-06 17:35:53,938 log Forbidden: /api/agendamentos/
+WARNING 2025-02-06 17:35:57,890 log Forbidden: /api/agendamentos/
+WARNING 2025-02-06 17:56:44,675 log Forbidden: /api/agendamentos/
+WARNING 2025-02-06 17:56:46,534 log Forbidden: /api/agendamentos/
+WARNING 2025-02-06 17:57:01,781 log Forbidden: /api/agendamentos/
+INFO 2025-02-06 17:57:49,537 autoreload Watching for file changes with StatReloader
+WARNING 2025-02-06 18:09:19,732 log Forbidden: /api/agendamentos/
+WARNING 2025-02-06 18:11:29,880 log Forbidden: /api/agendamentos/
+WARNING 2025-02-06 18:14:06,255 log Forbidden: /api/agendamentos/
+WARNING 2025-02-06 18:14:15,424 log Forbidden: /api/agendamentos/
+WARNING 2025-02-06 18:16:20,102 log Forbidden: /api/agendamentos/
+WARNING 2025-02-06 18:18:10,628 log Forbidden: /api/agendamentos/
+INFO 2025-02-07 19:32:21,995 autoreload Watching for file changes with StatReloader
+INFO 2025-02-07 19:32:25,486 brasil_api Fazendo requisição para BrasilAPI para a data: 2026-01-20
+WARNING 2025-02-07 19:32:25,959 log Bad Request: /api/agendamentos/
+INFO 2025-02-07 19:32:38,768 brasil_api Fazendo requisição para BrasilAPI para a data: 2026-12-25
+INFO 2025-02-07 19:32:46,589 brasil_api Fazendo requisição para BrasilAPI para a data: 2026-02-25
+WARNING 2025-02-07 19:33:02,308 log Forbidden: /api/agendamentos/
+INFO 2025-02-07 19:34:07,116 autoreload C:\Users\Thiago\OneDrive\Área de Trabalho\Py-Django\dfr-api\agenda\serializers.py changed, reloading.
+INFO 2025-02-07 19:34:07,822 autoreload Watching for file changes with StatReloader

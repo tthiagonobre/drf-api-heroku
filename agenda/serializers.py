@@ -10,8 +10,10 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         model = Agendamento
         fields = "__all__"
 
-    prestador = serializers.CharField()
- 
+    prestador = serializers.SlugRelatedField(
+        queryset=User.objects.all(), slug_field="username"
+    )
+
  
     def validate_prestador(self, value):
         """ Buscar um user no BD que esteja associado ao username que foi passado."""
