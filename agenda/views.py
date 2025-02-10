@@ -95,5 +95,5 @@ def get_horarios(request):
 def healthcheck(request):
     return Response({
         "status": "ok",
-        "message": "Deployado!"        
+        "message": "Deploy feito!"        
      }, status=200)
