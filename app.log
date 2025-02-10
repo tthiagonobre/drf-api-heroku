@@ -30,3 +30,5 @@ INFO 2025-02-07 19:34:07,116 autoreload C:\Users\Thiago\OneDrive\Área de Trabalh
 INFO 2025-02-07 19:34:07,822 autoreload Watching for file changes with StatReloader
 INFO 2025-02-07 19:42:19,706 autoreload C:\Users\Thiago\OneDrive\Área de Trabalho\Py-Django\dfr-api\agenda\views.py changed, reloading.
 INFO 2025-02-07 19:42:20,223 autoreload Watching for file changes with StatReloader
+INFO 2025-02-07 20:25:05,734 autoreload C:\Users\Thiago\OneDrive\Área de Trabalho\Py-Django\dfr-api\agenda\views.py changed, reloading.
+INFO 2025-02-07 20:25:07,369 autoreload Watching for file changes with StatReloader
