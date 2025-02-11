@@ -1,1 +1,1 @@
-
+[![Django CI](https://github.com/tthiagonobre/drf-api-heroku/actions/workflows/django.yml/badge.svg?branch=revert-1-develop)](https://github.com/tthiagonobre/drf-api-heroku/actions/workflows/django.yml)
