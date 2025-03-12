@@ -1,5 +1,6 @@
-from datetime import datetime
-from django.http import JsonResponse
+import csv
+from datetime import date, datetime
+from django.http import HttpResponse, JsonResponse
 from rest_framework import generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -9,6 +10,7 @@ from rest_framework import permissions
 from rest_framework.permissions import IsAdminUser
 from django.contrib.auth.models import User
 from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import permission_classes
 
 from agenda.utils import get_horarios_disponiveis
 
@@ -72,11 +74,39 @@ class AgendamentoDetail(generics.RetrieveUpdateDestroyAPIView):
         
         return Response({"detail": "Agendamento deletado com sucesso."}, 204)
     
-#adicionar permissao nessa view q apenas o admin tenha acesso
+
 class PrestadorList(generics.ListAPIView): # api/agendamentos/
     serializer_class = PrestadorSerializer
     queryset = User.objects.all()
     permission_classes = [IsAdminUser]
+    
+
+@api_view(http_method_names=["GET"])
+@permission_classes([permissions.IsAdminUser])
+def get_relatorio_prestadores(request):
+    formato = request.query_params.get("formato")
+    prestadores = User.objects.all()
+    serializer = PrestadorSerializer(prestadores, many=True)
+    if formato == "csv":
+        data_hoje = date.today()
+        response = HttpResponse(
+            content_type='text/csv',
+            headers={'Content-Disposition': f'attachment; filename="relatorio_{data_hoje}.csv"'},
+        )
+        writer = csv.writer(response)
+        for prestador in serializer.data:
+            agendamentos = prestador["agendamentos"]
+            for agendamento in agendamentos:
+                writer.writerow([
+                    agendamento["prestador"],
+                    agendamento["nome_cliente"],
+                    agendamento["email_cliente"],
+                    agendamento["telefone_cliente"],
+                    agendamento["data_horario"],
+                ])
+        return response
+    else:
+        return Response(serializer.data)
     
     
 @api_view(http_method_names=["GET"])
