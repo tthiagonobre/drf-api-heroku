@@ -8,10 +8,8 @@ https://docs.djangoproject.com/en/5.1/howto/deployment/wsgi/
 """
 
 import os
-
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tamarcado.settings.prod')
-#os.environ.setdefault('PORT', '8000')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'tamarcado.settings.dev')  # ou 'tamarcado.settings' caso seja a configuração padrão
 
 application = get_wsgi_application()
